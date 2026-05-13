@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-Learning </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <h2>E-Learning</h2>
+    <div id="nav"></div>
+</header>
+
+<!-- LOGIN -->
+<div id="loginPage" class="page active">
+    <h2>Login</h2>
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+
+    <p>New user? <span onclick="showPage('signupPage')">Signup</span></p>
+</div>
+
+<!-- SIGNUP -->
+<div id="signupPage" class="page">
+    <h2>Signup</h2>
+    <input id="signUser" placeholder="Username">
+    <input id="signPass" type="password" placeholder="Password">
+    <button onclick="signup()">Create Account</button>
+</div>
+
+<!-- HOME -->
+<div id="homePage" class="page">
+    <h2>Welcome</h2>
+    <button onclick="showPage('coursePage')">Go to Courses</button>
+</div>
+
+<!-- COURSES -->
+<div id="coursePage" class="page">
+    <h2>Courses</h2>
+
+    <div class="card">
+        <h3>Web Dev</h3>
+        <button onclick="enroll('Web Dev')">Enroll</button>
+    </div>
+
+    <div class="card">
+        <h3>Python</h3>
+        <button onclick="enroll('Python')">Enroll</button>
+    </div>
+</div>
+
+<!-- VIDEO -->
+<div id="videoPage" class="page">
+    <h2>Course Video</h2>
+    <video width="300" controls>
+        <source src="sample.mp4" type="video/mp4">
+    </video>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboardPage" class="page">
+    <h2>My Courses</h2>
+    <div id="myCourses"></div>
+</div>
+
+<script src="script.js"></script>
+
+<style>
+    body {
+        font-family:Arial;
+        margin:0;
+    }
+
+    header{
+        background:#336291;
+        color:white;
+        padding:10px;
+        display:flex;
+        justify-content:space-between;
+    }
+
+.page{
+    display:none;
+    padding:20px;
+}
+
+.active{
+    display:block;
+}
+
+input{
+    display:block;
+    margin:10px 0;
+    padding:8px;
+}
+
+button{
+    padding:8px 15px;
+    margin:5px;
+    background:#3498db;
+    color:white;
+    border:none;
+    cursor:pointer;
+}
+
+.card{
+    background:#ecf0f1;
+    padding:15px;
+    margin:10px;
+}
+</style>
+
+
+<script>
+let currentUser = null;
+let users = JSON.parse(localStorage.getItem("users")) || {};
+
+function showPage(id){
+    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+}
+
+// SIGNUP
+function signup(){
+    let u = document.getElementById("signUser").value;
+    let p = document.getElementById("signPass").value;
+
+    if(users[u]){
+        alert("User exists");
+    } else {
+        users[u] = {password:p, courses:[]};
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Account created!");
+        showPage("loginPage");
+    }
+}
+
+// LOGIN
+function login(){
+    let u = document.getElementById("loginUser").value;
+    let p = document.getElementById("loginPass").value;
+
+    if(users[u] && users[u].password === p){
+        currentUser = u;
+        updateNav();
+        showPage("homePage");
+    } else {
+        alert("Invalid login");
+    }
+}
+
+// NAVBAR
+function updateNav(){
+    document.getElementById("nav").innerHTML = `
+        <button onclick="showPage('homePage')">Home</button>
+        <button onclick="showPage('coursePage')">Courses</button>
+        <button onclick="loadDashboard()">Dashboard</button>
+        <button onclick="logout()">Logout</button>
+    `;
+}
+
+// ENROLL
+function enroll(course){
+    let user = users[currentUser];
+
+    if(!user.courses.includes(course)){
+        user.courses.push(course);
+        localStorage.setItem("users", JSON.stringify(users));
+        alert("Enrolled!");
+    } else {
+        alert("Already enrolled");
+    }
+}
+
+// DASHBOARD
+function loadDashboard(){
+    let container = document.getElementById("myCourses");
+    container.innerHTML = "";
+
+    users[currentUser].courses.forEach(c => {
+        let div = document.createElement("div");
+        div.className = "card";
+        div.innerHTML = `${c} <br><button onclick="showPage('videoPage')">Watch</button>`;
+        container.appendChild(div);
+    });
+
+    showPage("dashboardPage");
+}
+
+// LOGOUT
+function logout(){
+    currentUser = null;
+    location.reload();
+}
+</script>
+
+</body>
+</html>
