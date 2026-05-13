@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>E-Learning Platform</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family:Arial;
+        }
+
+        header{
+            background:#2c3e50;
+            color:white;
+            padding:15px;
+            display:flex;
+            justify-content:space-between;
+        }
+
+        nav button{
+            margin:5px;
+            padding:8px 15px;
+            border:none;
+            background:#3498db;
+            color:white;
+            cursor:pointer;
+            border-radius:5px;
+        }
+
+        .page{
+            display:none;
+            padding:20px;
+        }
+
+        .active{
+            display:block;
+        }
+
+        .card{
+            background:#ecf0f1;
+            padding:15px;
+            margin:10px;
+            border-radius:10px;
+        }
+
+        button.enroll{
+            background:green;
+            color:white;
+            padding:8px;
+            border:none;
+            cursor:pointer;
+            border-radius:5px;
+        }
+
+        .dashboard-card{
+            background:#dff9fb;
+            padding:15px;
+            margin:10px;
+            border-radius:10px;
+        }
+    </style>
+
+</head>
+<body>
+
+<header>
+    <h2>E-Learning</h2>
+
+    <nav>
+        <button onclick="showPage('home')">Home</button>
+        <button onclick="showPage('courses')">Courses</button>
+        <button onclick="showPage('dashboard')">Dashboard</button>
+        <button onclick="showPage('login page')">Login</button>
+    </nav>
+</header>
+
+<!-- HOME -->
+<div id="home" class="page active">
+    <h1>Welcome to E-Learning</h1>
+    <p>Click on Courses to start learning!</p>
+</div>
+
+<!-- COURSES -->
+<div id="courses" class="page">
+    <h2>Available Courses</h2>
+
+    <div class="card">
+        <h3>Web Development</h3>
+        <button class="enroll" onclick="enroll('Web Development')">Enroll</button>
+    </div>
+
+    <div class="card">
+        <h3>Python Programming</h3>
+        <button class="enroll" onclick="enroll('Python Programming')">Enroll</button>
+    </div>
+
+    <div class="card">
+        <h3>Database Management</h3>
+        <button class="enroll" onclick="enroll('Database Management')">Enroll</button>
+    </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page">
+    <h2>My Courses</h2>
+    <div id="myCourses"></div>
+</div>
+
+
+<script>
+    let enrolledCourses = [];
+
+    function showPage(pageId){
+        let pages = document.querySelectorAll(".page");
+
+        pages.forEach(p => p.classList.remove("active"));
+
+        document.getElementById(pageId).classList.add("active");
+    }
+
+    function enroll(course){
+        if(!enrolledCourses.includes(course)){
+            enrolledCourses.push(course);
+            alert(course + " enrolled successfully!");
+            updateDashboard();
+        } else {
+            alert("Already enrolled!");
+        }
+    }
+
+    function updateDashboard(){
+        let container = document.getElementById("myCourses");
+        container.innerHTML = "";
+
+        enrolledCourses.forEach(course => {
+            let div = document.createElement("div");
+            div.className = "dashboard-card";
+            div.innerText = course;
+
+            container.appendChild(div);
+localStorage.setItem("courses", JSON.stringify(enrolledCourses));
+
+        });
+    }
+</script>
+
+
+
+
+</body>
+</html>
